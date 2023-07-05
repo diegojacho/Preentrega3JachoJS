@@ -251,9 +251,9 @@ function showCartTable() {
 			grandTotal += subTotal;
 		});
 	}
-	$('#cartTableBody').html(cartRowHTML);
-	$('#itemCount').text(JSON.parse(itemCount));
-	$('#totalAmount').text("$" + grandTotal.toFixed(2));
+	document.getElementById('cartTableBody').innerHTML = cartRowHTML;
+    document.getElementById('itemCount').textContent = itemCount;
+    document.getElementById('totalAmount').textContent = "$" + grandTotal.toFixed(2);
 }
 
 function removeItem(element) {
