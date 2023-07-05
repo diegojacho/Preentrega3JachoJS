@@ -176,40 +176,44 @@ function AbcOrder (array){
 }
 
 function addToCart(element) {
-	let productParent = $(element).closest('.card-body');
-	let price = $(productParent).find('.price-item span').text();
-	let productName = $(productParent).find('.card-title').text();
-	let quantity = $(productParent).find('.product-quantity').val();
+    let productParent = element.closest('.card-body');
+    let priceElement = productParent.querySelector('.price-item span');
+    let productNameElement = productParent.querySelector('.card-title');
+    let quantityElement = productParent.querySelector('.product-quantity');
 
-        let cartArray = [];
-        // If javascript shopping cart local is not empty
-        if (localStorage.getItem('shopping-cart')) {
-            cartArray = JSON.parse(localStorage.getItem('shopping-cart'));
-        }
-        // Check if the same product is already in the cart
-        let existingItemIndex = cartArray.findIndex(item => {
-            let cartItem = JSON.parse(item);
-            return cartItem.productName === productName;
-        });
+    let price = priceElement.textContent;
+    let productName = productNameElement.textContent;
+    let quantity = quantityElement.value;
 
-        if (existingItemIndex !== -1) {
-            // Item already exists in the cart, increase the quantity
-            let existingItem = JSON.parse(cartArray[existingItemIndex]);
-            existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
-            cartArray[existingItemIndex] = JSON.stringify(existingItem);
-        } else {
-            let cartItem = {
-                productName: productName,
-                price: price,
-                quantity: quantity
-            };
-            cartArray.push(JSON.stringify(cartItem));
-        }
-    
-        let cartJSON = JSON.stringify(cartArray);
-        localStorage.setItem('shopping-cart', cartJSON);
-        showCartTable();
+    let cartArray = [];
+    // If the shopping cart in local storage is not empty
+    if (localStorage.getItem('shopping-cart')) {
+        cartArray = JSON.parse(localStorage.getItem('shopping-cart'));
     }
+    // Check if the same product is already in the cart
+    let existingItemIndex = cartArray.findIndex(item => {
+        let cartItem = JSON.parse(item);
+        return cartItem.productName === productName;
+    });
+
+    if (existingItemIndex !== -1) {
+        // Item already exists in the cart, increase the quantity
+        let existingItem = JSON.parse(cartArray[existingItemIndex]);
+        existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
+        cartArray[existingItemIndex] = JSON.stringify(existingItem);
+    } else {
+        let cartItem = {
+            productName: productName,
+            price: price,
+            quantity: quantity
+        };
+        cartArray.push(JSON.stringify(cartItem));
+    }
+
+    let cartJSON = JSON.stringify(cartArray);
+    localStorage.setItem('shopping-cart', cartJSON);
+    showCartTable();
+}
 
 function emptyCart() {
 	if (localStorage.getItem('shopping-cart')) {
@@ -253,8 +257,8 @@ function showCartTable() {
 }
 
 function removeItem(element) {
-    let row = $(element).closest('tr');
-    let productName = $(row).find('td:first-child').text().trim();
+    let row = element.closest('tr');
+    let productName = row.querySelector('td:first-child').textContent.trim();
   
     let cartArray = [];
     if (localStorage.getItem('shopping-cart')) {
@@ -265,7 +269,8 @@ function removeItem(element) {
       let cartItem = JSON.parse(item);
       return cartItem.productName === productName;
     });
-    //Check if item has more than 1 quantity and removes quantity until 0 and then removes entire row
+  
+    // Check if the item has more than 1 quantity and removes quantity until 0, then removes the entire row
     if (itemIndex !== -1) {
       let cartItem = JSON.parse(cartArray[itemIndex]);
       if (cartItem.quantity > 1) {
