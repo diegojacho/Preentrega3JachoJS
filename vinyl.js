@@ -1,340 +1,363 @@
-//Initiate variable and constant that we will be use thru the simulation
-let endMenu = false
-const vinylPrice = 9.99
-const albumPrice = 39.99
-const turnPrice = 229.99
-const shippingCost = 8
-const saleTax = 0.06
-let cartTotal = 0
-let vinylTotal = 0
-let albumTotal = 0
-let turnTotal = 0
+//Vinyl Record is a website that sells records, and allows a costumer to add/sell their own records
+//It filters the catalog by pice, and name. It adds items to the cart or to the wishList.
+//The shopping cart calculates the total amount and quantity, it also removes items or empty the entire cart
+//Items from the wish list can be moved to the cart and visversa
+//For the final I will add the remove from wishlist button and add sales tax and shipping cost to the shopping cart
 
-
-//Constructore classes
-class Vinyl{
-    constructor(id, artist, title, album, price){
-        this.id= id,
-        this.artist= artist,
-        this.title = title,
-        this.album=album,
-        this.price = price
-    }
-    showVinyl(){
-        alert(`The record's artist is ${this.artist} and the title is ${this.title} from the album ${this.album} and its price is $${this.price}`)
-    }
+//Getting DOM from HTML 
+let buttonSell = document.getElementById("btnSelllist")
+let vinylDiv = document.getElementById("catalogSection")
+let seeCatalog = document.getElementById("btnCatalog")
+let wishSection = document.getElementById("wishlistSection")
+let addVinylBtn = document.getElementById("addVinylBtn")
+let searchBar = document.getElementById("searchBar")
+let lowHigh= document.getElementById("lowHigh")
+let highLow= document.getElementById("highLow")
+let ABCorder= document.getElementById("ABCorder")
+let addCart = document.getElementById("buttonCart")
+let addWish = document.getElementById("btnWishlist")
+let btnEmpty = document.getElementById("btnEmpty")
+let btnCatalogCart = document.getElementById("btnCatalogCart")
+let btnCheckout = document.getElementById("btnCheckout")
+let submit = document.getElementById("addVinylBtn")
+let productsWish
+if(localStorage.getItem("wish")){
+    productsWish = JSON.parse(localStorage.getItem("wish"))
+} else{
+    productsWish=[]
+    localStorage.setItem("wish", productsWish)
 }
 
-class Tech{
-    constructor(id, name, brand, price){
-        this.id=id,
-        this.name=name,
-        this.brand=brand,
-        this.price=price
-    }
-    showTech(){
-        alert(`The name of the item is ${this.name} its brand is ${this.brand} and it has a cost of $${this.price}`)
-    }
+//New Functions for DOM and interactive menu to initiate the website and welcome the constumer, 
+//only to keep the first clicks interactive
+  function showCart() {
+    document.getElementById("catalogSection").style.display = "none";
+    document.getElementById("wishlistSection").style.display = "none";
+    document.getElementById("sellVinylSection").style.display = "none";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("shopping-cart").style.display = "flex"
+  }
+  
+  function showWishlist() {
+    document.getElementById("catalogSection").style.display = "none";
+    document.getElementById("cartSection").style.display = "none";
+    document.getElementById("wishlistSection").style.display = "flex";
+    document.getElementById("sellVinylSection").style.display = "none";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("shopping-cart").style.display = "none"
+
+  }
+  function showSellVinyl(){
+    document.getElementById("catalogSection").style.display = "none";
+    document.getElementById("cartSection").style.display = "none";
+    document.getElementById("wishlistSection").style.display = "none";
+    document.getElementById("sellVinylSection").style.display = "flex";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("shopping-cart").style.display = "none"
+
 }
 
-class Wish{
-    constructor(id, artist, title, album, price){
-        this.id=id,
-        this.artist=artist,
-        this.title=title,
-        this.album=album,
-        this.price=price
-    }
-    showWish(){
-        alert(`Your wish list contains ${this.artist} its single is ${this.title} from the album ${this.album} and your suggested cost is $${this.price} `)
-    }
+//Functions including DOM to show catalog, add vinyls and do all calculations
+function showCatalog(array){
+    vinylDiv.innerHTML=``
+    document.getElementById("catalogSection").style.display = "flex";
+    document.getElementById("cartSection").style.display = "none";
+    document.getElementById("wishlistSection").style.display = "none";
+    document.getElementById("sellVinylSection").style.display = "none";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("shopping-cart").style.display = "none"
+
+    for (let vinyl of array){
+        let newVinylDiv = document.createElement("div")
+        newVinylDiv.className = "col-12 col-md-6 col-lg-3 col-sm-6 my-2 justify-content-md-center"
+        newVinylDiv.innerHTML = `<div id="${vinyl.id}" class="card col d-flex" style="width: 15rem;float: none;margin: 0 auto;">
+                                   <img class="card-img-top img-fluid" style="height: 100%; float: none;margin: 0 auto;width:100%"src="assets/${vinyl.image}" alt="${vinyl.title} by ${vinyl.artist}">
+                                   <div class="card-body text-center">
+                                      <h4 class="card-title">${vinyl.title}</h4>
+                                      <p>Artist: ${vinyl.artist}</p>
+                                      <p>Album: ${vinyl.album}</p>
+                                      <p class="price-item">Price: $<span>${vinyl.price}</span></p>
+                                      <div class="cart-action">
+						              <input type="text" class="product-quantity" name="quantity" value="1" size="2"/>
+                                      <button id="buttonCart${vinyl.id}" value="Add to Cart" class="add-to-cart btn btn-outline-success" onClick="addToCart(this)">Add to Cart</button>
+					                  </div>
+                                      <button id="buttonWish${vinyl.id}" class="btn btn-outline-success">Add to WishList <i class="fa fa-heart-o" aria-hidden="true"></i></button>
+                                   </div>
+                                </div>`
+        vinylDiv.appendChild(newVinylDiv)
+        let addBtnWish = document.getElementById(`buttonWish${vinyl.id}`)
+        addBtnWish.addEventListener("click", ()=>{
+            addToWish(vinyl)
+        })
+     }
 }
-//Calling objets vinyls
-const vinyl1= new Vinyl(1, "Miley Cirus", "Decades", "Flowers", 40)
-const vinyl2= new Vinyl(2, "Beatles", "Here Comes the Sun", "Abbey Road", 20)
-const vinyl3= new Vinyl(3, "One Republic", "Someday", "Human", 60)
-const vinyl4= new Vinyl(4, "Kygo", "Love Somebody", "Cloud Nine", 50)
-const vinyl5= new Vinyl(5, "Red Hot Chili Peppers", "Snow", "The War", 50)
 
+function addVinyl(array){
+    let titleAdd = document.getElementById("titleInput")
+    let artistAdd = document.getElementById("artistInput")
+    let albumAdd = document.getElementById("albumInput")
+    let priceAdd = document.getElementById('priceInput')
 
-//Calling objects technologies
-const tech1= new Tech(1, "Turntable modern", "Audio-Technica", 100)
-const tech2= new Tech(2, "Turntable RT81", "Fluance", 120)
-const tech3= new Tech(3, "Turntable ATR45", "Rega", 125)
-const tech4= new Tech(4, "Turntable SL-1500C", "Technics", 115)
+    //Included this part to validate the entry (input) it will not add the vinyl untill all inputs are filled
+    if(titleAdd.value && artistAdd.value && albumAdd.value && priceAdd.value){
+    const vinylNew = new Vinyl(array.length+1, titleAdd.value, artistAdd.value, albumAdd.value, priceAdd.value, "vinylsell.jpeg");
+    array.push(vinylNew);
+    localStorage.setItem("catalogVinyl", JSON.stringify(array));
+    showCatalog(array);
+    titleAdd.value = "";
+    artistAdd.value = "";
+    albumAdd.value = "";
+    priceAdd.value = "";
+    } else {
+    let nameError = document.getElementById("nameErrort");
+    let nameErrora = document.getElementById("nameErrora");
+    let nameErrorb = document.getElementById("nameErrorb");
+    let nameErrorp = document.getElementById("nameErrorp");
+    nameError.classList.add("visible");
+    nameErrora.classList.add("visible");
+    nameErrorb.classList.add("visible");
+    nameErrorp.classList.add("visible");
+    titleAdd.classList.add("invalid");
+    artistAdd.classList.add("invalid");
+    albumAdd.classList.add("invalid");
+    priceAdd.classList.add("invalid");
+    nameError.setAttribute("aria-hidden", false);
+    nameError.setAttribute("aria-invalid", true);
+    nameErrora.setAttribute("aria-hidden", false);
+    nameErrora.setAttribute("aria-invalid", true);
+    nameErrorb.setAttribute("aria-hidden", false);
+    nameErrorb.setAttribute("aria-invalid", true);
+    nameErrorp.setAttribute("aria-hidden", false);
+    nameErrorp.setAttribute("aria-invalid", true);
+    } 
+}
 
-//Create array for vinyl and tech items 
-//Create an empty array for a wishList and searchItem, this will be use to add items and/or filter items 
-const catalogVinyl = []
-catalogVinyl.push(vinyl1, vinyl2, vinyl3, vinyl4, vinyl5)
-const catalogTech=[]
-catalogTech.push(tech1, tech2,tech3,tech4)
-const wishList=[]
-const searchItem=[]
-
-//Declare all functions to use in this simulation, function to go through 1st menu
-//Functions to calculate total amount based on the limited budget and finding items by title, album or brand
-//Total accounts for sales tax and shipping cost
-function addWish(){
-    let vinylArtist = prompt("Enter artist name")
-    let vinylTitle = prompt("Enter record name")
-    let vinylAlbum = prompt("Enter album name")
-    let vinylPrice = parseInt(prompt("Enter price"))
-    const newWish = new Wish(wishList.length+1, vinylArtist, vinylTitle,
-        vinylAlbum, vinylPrice)
-        wishList.push(newWish)
-    console.log(wishList)
-    alert(`Your wish list items are:`)
-    wishList.forEach(
-        newWish=>newWish.showWish()
+function searchingBar(search, array){
+    let searchName = array.filter(
+        (artista)=>artista.artist.toUpperCase().includes(search.toUpperCase())||
+            artista.title.toUpperCase().includes(search.toUpperCase())
     )
-}
-
-function checkCatalogVinyl(array){
-    alert(`Our available vinyls are:`)
-    array.forEach(
-        vinyl=>vinyl.showVinyl()
-    )
-}
-
-function checkCatalogTech(array){
-    alert(`Our available tech products are:`)
-    array.forEach(
-        tech=>tech.showTech()
-    )
-}
-
-function checkWishList(array){
-    alert(`The items in your wish list are:`)
-    array.forEach(
-        wish=>wish.showWish()
-    )
-}
-
-function searchByArtist(array){
-    let artistSearch = prompt(`What is the name of the artist?`)
-    let search = array.find(
-        (artista)=>artista.artist.toUpperCase() === artistSearch.toUpperCase()
-    )
-    searchItem.push(search)
-    if (search == undefined){
-        alert(`The artist ${artistSearch} is not in our catalog`)
+    let noMatch = document.createElement("div")
+    noMatch.className = "d-flex"
+    if (searchName.length == 0){
+        noMatch.innerHTML = `<h3>There are not matches to the search: ${search}. </h3>`
+        showCatalog(searchName)
     }else{
-        console.log(search)
-        alert(`We have the following items from the artist ${artistSearch}:`)
-        searchItem.forEach(
-            search=>search.showVinyl()
-        )
+       noMatch.innerHTML = ``
+       showCatalog(searchName)
     }
-    searchItem.splice(0, searchItem.length)
-}
-
-function searchByBrand(array){
-    let brandSearch = prompt("What turntable brand you are looking for?")
-    let search = array.find(
-        (entry)=> entry.brand.toUpperCase() == brandSearch.toUpperCase() 
-    )
-    searchItem.push(search)
-    if (search == undefined){
-        alert(`The brand ${brandSearch} is not in our catalog`)
-    } else{
-        console.log(search)
-        alert(`We have the following items from the brand ${brandSearch}:`)
-        searchItem.forEach(
-            search=>search.showTech()
-        )
-        searchItem.splice(0, searchItem.length)
-    }
+    vinylDiv.appendChild(noMatch)
 }
 
 function lowtoHigh(array){
     const lowHigh = [].concat(array)
-    console.log(lowHigh)
     lowHigh.sort((a,b)=> a.price - b.price)
-    checkCatalogVinyl(lowHigh)
+    showCatalog(lowHigh)
 }
 
 function hightoLow(array){
     const highLow = [].concat(array)
-    console.log(highLow)
     highLow.sort((x,y)=> y.price - x.price)
-    checkCatalogVinyl(highLow)
+    showCatalog(highLow)
 }
 
-function order(array){
-    let option = parseInt(prompt(`
-    1 - Price low to high
-    2 - Price high to low
-    `))
-    switch(option){
-        case 1:
-            lowtoHigh(array)
-        break
-        case 2:
-            hightoLow(array)
-        break
-        default:
-            alert(`The option ${option} is not valid`)
-        break
+function AbcOrder (array){
+    const arrayABC = [].concat(array)
+    arrayABC.sort ((a,b)=>{
+        if (a.title>b.title){
+            return 1
+        }
+        if (a.title <b.title){
+            return -1
+        }
+        return 0
+    })
+    showCatalog(arrayABC)
+}
+
+function addToCart(element) {
+	let productParent = $(element).closest('.card-body');
+	let price = $(productParent).find('.price-item span').text();
+	let productName = $(productParent).find('.card-title').text();
+	let quantity = $(productParent).find('.product-quantity').val();
+
+        let cartArray = [];
+        // If javascript shopping cart local is not empty
+        if (localStorage.getItem('shopping-cart')) {
+            cartArray = JSON.parse(localStorage.getItem('shopping-cart'));
+        }
+        // Check if the same product is already in the cart
+        let existingItemIndex = cartArray.findIndex(item => {
+            let cartItem = JSON.parse(item);
+            return cartItem.productName === productName;
+        });
+
+        if (existingItemIndex !== -1) {
+            // Item already exists in the cart, increase the quantity
+            let existingItem = JSON.parse(cartArray[existingItemIndex]);
+            existingItem.quantity = parseInt(existingItem.quantity) + parseInt(quantity);
+            cartArray[existingItemIndex] = JSON.stringify(existingItem);
+        } else {
+            let cartItem = {
+                productName: productName,
+                price: price,
+                quantity: quantity
+            };
+            cartArray.push(JSON.stringify(cartItem));
+        }
+    
+        let cartJSON = JSON.stringify(cartArray);
+        localStorage.setItem('shopping-cart', cartJSON);
+        showCartTable();
+    }
+
+function emptyCart() {
+	if (localStorage.getItem('shopping-cart')) {
+		// Clear JavaScript localStorage by index, the entire cart is erase
+		localStorage.removeItem('shopping-cart');
+		showCartTable();
+	}
+}
+
+function showCartTable() {
+	let cartRowHTML = '';
+	let itemCount = 0;
+	let grandTotal = 0;
+	let price = 0;
+	let quantity = 0;
+	let subTotal = 0;
+
+	if (localStorage.getItem('shopping-cart')) {
+		let shoppingCart = JSON.parse(localStorage.getItem('shopping-cart'));
+		//Iterate javascript shopping cart array
+		shoppingCart.forEach((item)=> {
+			let cartItem = JSON.parse(item);
+			price = parseFloat(cartItem.price);
+			quantity = parseInt(cartItem.quantity)
+			subTotal = price * quantity
+            itemCount += quantity
+			cartRowHTML += '<tr>' +
+            '<td>' + '<button id="deleteItem" class="remove-button" ><i class="fa fa-trash" onclick="removeItem(this)" aria-hidden="true"></i></button> ' +
+            cartItem.productName + '</td>' +
+				"<td id='itemPrice' class='text-right'>$" + price.toFixed(2) + "</td>" +
+				"<td id='itemQuantity'class='text-right'>" + quantity + "</td>" +
+				"<td id='itemSubtotal' class='text-right'>$" + subTotal.toFixed(2) + "</td>" +
+				"</tr>";
+
+			grandTotal += subTotal;
+		});
+	}
+	$('#cartTableBody').html(cartRowHTML);
+	$('#itemCount').text(JSON.parse(itemCount));
+	$('#totalAmount').text("$" + grandTotal.toFixed(2));
+}
+
+function removeItem(element) {
+    let row = $(element).closest('tr');
+    let productName = $(row).find('td:first-child').text().trim();
+  
+    let cartArray = [];
+    if (localStorage.getItem('shopping-cart')) {
+      cartArray = JSON.parse(localStorage.getItem('shopping-cart'));
+    }
+  
+    let itemIndex = cartArray.findIndex((item) => {
+      let cartItem = JSON.parse(item);
+      return cartItem.productName === productName;
+    });
+    //Check if item has more than 1 quantity and removes quantity until 0 and then removes entire row
+    if (itemIndex !== -1) {
+      let cartItem = JSON.parse(cartArray[itemIndex]);
+      if (cartItem.quantity > 1) {
+        cartItem.quantity -= 1;
+        cartArray[itemIndex] = JSON.stringify(cartItem);
+      } else {
+        cartArray.splice(itemIndex, 1);
+      }
+  
+      let cartJSON = JSON.stringify(cartArray);
+      localStorage.setItem('shopping-cart', cartJSON);
+      showCartTable();
+    }
+  }
+
+  function addToWish(vinyl){
+    let vinylAdded = productsWish.find((elem)=>elem.id == vinyl.id)
+    if (vinylAdded == undefined){
+        productsWish.push(vinyl)
+        localStorage.setItem("wish",JSON.stringify(productsWish))
+    } else{
+        alert(`Item is in your Wish List`)
     }
 }
 
-//Updated these functions from PreEntrega1 -> now they used find to get the price and calculate the total
-function vinyl(array){
-    let itemNumberv = prompt(`Enter title of vinyl to purchase
-    Decades
-    Here Comes the Sun
-    Someday
-    Love Somebody
-    Snow`)
-    let busq = array.find(
-        (find) => find.title.toUpperCase() === itemNumberv.toUpperCase()
-    )
-    let vinylAmount = busq.price
-    vinylTotal=(vinylAmount) + (vinylAmount*saleTax) + shippingCost
+function cardToWish(array){
+    wishSection.innerHTML = ``
+    array.forEach((productsWish)=>{
+        wishSection.innerHTML += `
+        <div > 
+        <div class="card col d-flex" style="width: 15rem;float: none;margin: 0 auto; id ="productoCarrito${productsWish.id}">
+                 <img class="card-img-top img-fluid" style="height: 100%; float: none;margin: 0 auto;width:100%" src="assets/${productsWish.image}" alt="">
+                 <div class="card-body text-center">
+                        <h4 class="card-title">${productsWish.title}</h4>
+                        <p class="card-text">${productsWish.artist}</p>
+                         <p class="price-item">$<span>${productsWish.price}</span></p> 
+                         <input type="text" class="product-quantity" name="quantity" value="1" size="2"/>
+                         <button class="btn btn-outline-success" id="botonMove${productsWish.id}" onClick="addToCart(this)">Move to Cart</button>
+                 </div>    
+            </div>
+       </div>`
+    })
 }
 
-function album(array){
-    let itemNumbera = prompt(`Enter title of album to purchase
-    Flowers
-    Abbey Road
-    Human
-    Cloud Nine
-    The War`)
-    let busq = array.find(
-        (find) => find.album.toUpperCase() === itemNumbera.toLocaleUpperCase()
-    )
-    let albumAmount = busq.price
-    albumTotal=(albumAmount) + (albumAmount*saleTax) + shippingCost
-}
+//Calling EVENTS, a couple of other events I added them direcly on the button using onclick, hope that is okay
+buttonSell.addEventListener("click", (event) =>{
+    event.preventDefault()
+    showSellVinyl()
+})
 
-function turntable(array){
-    let itemNumbert = prompt(`Enter brand of turntable to purchase
-    Audio Technica
-    Fluance
-    Rega
-    Technics`)
-    let busq = array.find(
-        (find) => find.brand.toLocaleUpperCase() === itemNumbert.toLocaleUpperCase()
-    )
-    let turnAmount = busq.price
-    turnTotal=(turnAmount) + (turnAmount*saleTax) + shippingCost
-}
+seeCatalog.addEventListener("click", () =>{
+    showCatalog(catalogVinyl)
+})
 
-function grandTotal(){
-    cartTotal = vinylTotal + albumTotal + turnTotal
-    alert(`The total amount to pay is ${cartTotal.toFixed(2)}`)
-    console.log(`The total amount to pay is ${cartTotal.toFixed(2)}`)
-}
+addVinylBtn.addEventListener("click", function (event){
+    event.preventDefault()
+    addVinyl(catalogVinyl)
+})
 
-//Ask customer if he is in the USA, if not, message will display that we do not ship internaitonally
-let shipping=0;
-do{
-shipping = parseInt(prompt(`Are you located in the USA?
-1 - Yes
-2 - No
-0 - Close Window`))
-    switch (shipping){
-        case 1:
-            console.log(`${shipping}`)
-            alert(`Browse and add items in your shopping cart`)
-            endMenu=true
-            break
-        case 2:
-            console.log(`${shipping}`)
-            alert(`Sorry, we do not ship internationally but you can still browse and shop our items list locally`)
-            endMenu=true
-            break
-        case 0:
-            console.log(`${shipping}`)
-            alert(`Thanks for visiting our website`)
-            endMenu=true
-            break
-        default:
-            console.log(`${shipping} is not a valid entry`)
-            alert(`No valid entry, please select from the ones below`)
-            break
+lowHigh.addEventListener("click", ()=>{
+    lowtoHigh(catalogVinyl)
+})
+
+highLow.addEventListener("click",()=>{
+    hightoLow(catalogVinyl)
+})
+
+ABCorder.addEventListener("click",()=>{
+    AbcOrder(catalogVinyl)
+})
+
+searchBar.addEventListener("input", ()=>{
+    searchingBar(searchBar.value ,catalogVinyl)
+})
+
+btnEmpty.addEventListener("click",()=>{
+    emptyCart()
+})
+
+btnCatalogCart.addEventListener("click", ()=>{
+    showCatalog(catalogVinyl)
+})
+
+btnCheckout.addEventListener("click", ()=>{
+    let shoppingCart = JSON.parse(localStorage.getItem('shopping-cart'));
+    if(shoppingCart === null){
+        alert(`Your cart is Empty, please browse our catalog`)
+    } else{
+        alert('Thanks for your purchase')
     }
-} while(!endMenu)
+})
 
-//Loop que primero chequee que el usurario no cerro la ventana
-if(shipping!=0){
-
-//Second menu that shows the catalog available, allows costumer to filter and/or find items based on artist name, album, brand
-//Also allows to sort items by price (only in the vinyl catalog)
-//Option 6 allows to add items to their wishList, items they wish to see in the store, this eventually will be use for shopping cart
-let menuVariable=0;
-do{
-    menuVariable=parseInt(prompt(`Choose an option from the menu:
-    1 - Browse Vinyl Catalog
-    2 - Browse Turntables Catalog
-    3 - Search by Artist
-    4 - Search by Brand
-    5 - Sort Vinyl and Albums
-    6 - Add item you wish to see in our store
-    0 - Close Window`))
-    switch (menuVariable){
-        case 1:
-            checkCatalogVinyl(catalogVinyl)
-            endMenu=false
-        break
-        case 2:
-            checkCatalogTech(catalogTech)
-            endMenu=false
-        break
-        case 3:
-            searchByArtist(catalogVinyl)
-            endMenu=false
-        break
-        case 4:
-            searchByBrand(catalogTech)
-            endMenu=false
-        break
-        case 5:
-            order(catalogVinyl)
-            endMenu=false
-        break
-        case 6:
-            addWish()
-            endMenu=false
-        break
-        case 0:
-            alert(`Thanks for browsing our items`)
-            endMenu = true
-        break
-        default:
-            console.log(`${menuVariable} is not a valid entry`)
-            alert(`No valid entry, please select from the ones below`)
-            break
-    }
-} while(!endMenu)
-}
-
-//Ask for budget able to expend in the store
-let amountExpent = parseInt(prompt(`What is your maximum budget to expend?`))
-
-//Check if amount is not a number 
-while(isNaN(amountExpent)){
-    amountExpent = parseInt(prompt(`Please enter a number: What is your maximum budget to expend? `))
-}
-
-//Condicional going through amunt enter from customer
-if (amountExpent <9.99){
-    alert(`Your budget is not enough to purchase an item`)
-    console.log(`Amount is not enoguht to continue`)
-} else if (amountExpent <=69.99 && amountExpent>=19.99){
-    vinyl(catalogVinyl);
-    grandTotal();
-}
-else if (amountExpent >69.99 && amountExpent<=219.99){
-    vinyl(catalogVinyl)
-    album(catalogVinyl);
-    grandTotal();
-
-} else if (amountExpent>219.99){
-    vinyl(catalogVinyl);
-    album(catalogVinyl);
-    turntable(catalogTech);
-    grandTotal();
-}
-
+addWish.addEventListener("click", ()=>{
+    cardToWish(productsWish)
+})

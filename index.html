@@ -5,25 +5,144 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vinyl Shop</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="vinyl.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>Vinyl Shop</h1>
-    <h2>Shop Vinyl, Albums and Turntables</h2>
-    <div class="shop">
-        <div class="portada">
-            <h3>Vinyls </h3>
-            <img src="./multimedia/imagenes/vinylset1.png" alt="">
+    <header>
+        <div class="logo">
+            <img src="/multimedia/imagenes/vinyl_logo-transformed.png" alt="Logo" />
+          </div>
+          <div class="title">
+            <h1>Vinyl Record Store</h1>
+          </div>
+          <div class="search-bar">
+            <input id="searchBar" type="text" placeholder="Search..." />
+            <button id="btnSearch">Search</button>
+          </div>
+    </header>
+    <main class="p-2 m-0">
+        <div class="d-flex justify-content-space-between">
+            <button id="btnCatalog" class="btn btn-light me-2">View Catalog</button>
+            <button id="btnCart" class="btn btn-light me-2" onclick="showCart()">View Cart</button>
+            <button id="btnWishlist" class="btn btn-light me-2" onclick="showWishlist()">View Wishlist</button>
+            <button id="btnSelllist" class="btn btn-light me-2" >Sell Vinyl</button>
+            <div class="sorting">
+                <ul>
+                  <li class="dropdown">
+                    <a href="#">Filter <i class="fa fa-sort" aria-hidden="true"></i></a>
+                    <div class="dropdown-content">
+                      <a href="#" id="lowHigh">Price Low to High</a>
+                      <a href="#" id="highLow">Price High to Low</a>
+                      <a href="#" id="ABCorder">ABC <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></a>
+                    </div>
+                  </li>
+                </ul>
+            </div>
         </div>
-        <div>
-            <h3>Album Sets</h3>
-            <img src="./multimedia/imagenes/release7.png" alt="">
+        <div class="sectionTotal">
+            <div id="welcomeSection" class="container">
+                <div class="background-image"></div>
+                <h2 class="heroTitle">Welcome to our Store</h2>
+                <p class="heroPara">Browse our catalog, shop and sell records with us</p>
+            </div>
+          <div class="d-flex">
+            <div id="catalogSection" style="display:none;">
+              <div id="vinylList" >
+              </div>
+            </div>
+            <div id="cartSection" style="display:none;">
+              <h2>Cart</h2>
+              <p>Your cart is empty.</p>
+            </div>
+            <div id="wishlistSection" style="display: none;">
+              <h2>Wishlist</h2>
+              <p>Your wishlist is empty.</p>
+            </div>
+            <div id="sellVinylSection" style="display: none;">
+                <form id="sellVinyl" class="mx-auto col-10 col-md-8 col-lg-6 ">
+                    <h4 class="sellTitle">Add Vinyl to Catalog</h4>
+                    <div>
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" aria-describedby="title" required id="titleInput">
+                        <span role="alert" class="errorMessage" id="nameErrort" aria-hidden="true">
+                            Please fill out title 
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="artist" class="form-lable">Artist</label>
+                        <input type="text" class="form-control" aria-describedby="artist" required id="artistInput">
+                        <span role="alert" class="errorMessage" id="nameErrora" aria-hidden="true">
+                            Please fill out artist name
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="album" class="form-lable">Album</label>
+                        <input type="text" class="form-control" aria-describedby="album" required id="albumInput">
+                        <span role="alert" class="errorMessage" id="nameErrorb" aria-hidden="true">
+                            Please fill out album name
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-lable">Price</label>
+                        <input type="text" class="form-control" aria-describedby="price" required id="priceInput">
+                        <span role="alert" class="errorMessage" id="nameErrorp" aria-hidden="true">
+                            Please fill out price ($)
+                        </span>
+                    </div>
+                    <div>
+                        <button type="text" id="addVinylBtn" class="btn btn-success" >Post Vinyl</button>
+                    </div>
+                </form>
+            </div>
+            <div id="shopping-cart" style="display:none; width:100%;">
+                <div class="txt-heading" style="width:100%">
+                    <h2 style="text-align: center;">Shopping Cart</h2>
+                    <button id="btnEmpty" >Empty Cart</button>
+                    <table id="table" class="tbl-cart" style="width:100%" cellpadding="10" cellspacing="5">
+                        <thead>
+                            <tr>
+                                <th style="width:100%;">Name</th>
+                                <th class='text-right' >Unit Price</th>
+                                <th class='text-right' >Quantity</th>
+                                <th class='text-right' >Sub Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartTableBody">
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="text-right">Total:</td>
+                                <td id="itemCount" class="text-right" colspan="2"></td>
+                                <td id="totalAmount" class="text-right"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div class="d-flex justify-content-end">
+                        <button id="btnCatalogCart" >Catalog</button>
+                        <button id="btnCheckout" >Checkout</button>
+                    </div>
+                </div>
+          </div>
         </div>
-        <div>
-            <h3>Turntables</h3>
-            <img src="./multimedia/imagenes/turntable8.png" alt="">
-        </div>
-    </div>
+    </main>
+    <footer class="footer">
+        <h3>Vinyl Records</h3>
+        <a href="https://www.facebook.com"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>
+        <a href="https://www.instagram.com"><i class="fa fa-instagram" aria-hidden="true"></i>
+        </a>
+        <a href="mailto:diegojacho25@gmail.com"><i class="fa fa-envelope" aria-hidden="true"></i>
+        </a>
+        <br>
+        <input type="email" placeholder="Your email address" />
+        <button>Subscribe</button>
+        <p>A company dedicated to providing the best vinyl records and music experiences.</p>
+      </footer>
+    <!-- JS scripts added the jquery cause its easier to called ID by using $ directly to simplify code lines -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="class.js"></script>
+    <script src="vinyl.js"></script>
 </body>
 </html>
