@@ -1,8 +1,10 @@
-//Vinyl Record is a website that sells records, and allows a costumer to add/sell their own records
+//Vinyl Record is an api that uses the api vinyl.json that sells records, and allows a costumer to add/sell their own records
 //It filters the catalog by pice, and name. It adds items to the cart or to the wishList.
 //The shopping cart calculates the total amount and quantity, it also removes items or empty the entire cart
-//Items from the wish list can be moved to the cart and visversa
-//For the final I will add the remove from wishlist button and add sales tax and shipping cost to the shopping cart
+//Items from the wish list can be moved to the cart and visversa, these items can also be removed from the wishlit
+//You can empty the shopping cart by removing all items, or each item at the time.
+//You can checkout after getting total of your purchase including sale tax, and shipoing rate
+//Diego Jacho Javascrip Coderhouse Course
 
 //Getting DOM from HTML 
 let buttonSell = document.getElementById("btnSelllist")
@@ -20,12 +22,15 @@ let btnEmpty = document.getElementById("btnEmpty")
 let btnCatalogCart = document.getElementById("btnCatalogCart")
 let btnCheckout = document.getElementById("btnCheckout")
 let submit = document.getElementById("addVinylBtn")
+let loader = document.getElementById("loader")
+let buttonDeleteWish = document.getElementById("botonDeleteWish")
+
 let productsWish
 if(localStorage.getItem("wish")){
     productsWish = JSON.parse(localStorage.getItem("wish"))
 } else{
     productsWish=[]
-    localStorage.setItem("wish", productsWish)
+    localStorage.setItem("wish", JSON.stringify(productsWish))
 }
 
 //New Functions for DOM and interactive menu to initiate the website and welcome the constumer, 
@@ -99,7 +104,7 @@ function addVinyl(array){
     let priceAdd = document.getElementById('priceInput')
 
     //Included this part to validate the entry (input) it will not add the vinyl untill all inputs are filled
-    if(titleAdd.value && artistAdd.value && albumAdd.value && priceAdd.value){
+    if(titleAdd.value && artistAdd.value && albumAdd.value && parseInt(priceAdd.value)){
     const vinylNew = new Vinyl(array.length+1, titleAdd.value, artistAdd.value, albumAdd.value, priceAdd.value, "vinylsell.jpeg");
     array.push(vinylNew);
     localStorage.setItem("catalogVinyl", JSON.stringify(array));
@@ -108,6 +113,18 @@ function addVinyl(array){
     artistAdd.value = "";
     albumAdd.value = "";
     priceAdd.value = "";
+    Toastify(
+        {
+           text: `Vinyl ${vinylNew.title} is added to our catalog`,
+           duration: 2000,
+           gravity: "bottom",
+           position: "center",
+           style: {
+              color: "#F0F2F0",
+              background: "#D9A566"
+           }
+        }
+     ).showToast()
     } else {
     let nameError = document.getElementById("nameErrort");
     let nameErrora = document.getElementById("nameErrora");
@@ -189,6 +206,12 @@ function addToCart(element) {
     // If the shopping cart in local storage is not empty
     if (localStorage.getItem('shopping-cart')) {
         cartArray = JSON.parse(localStorage.getItem('shopping-cart'));
+        Swal.fire({
+            title:`Item added to your Cart`,
+            confirmButtonColor: `#D9A566`,
+            confirmButtonText: `Ok`
+            })
+        
     }
     // Check if the same product is already in the cart
     let existingItemIndex = cartArray.findIndex(item => {
@@ -217,9 +240,27 @@ function addToCart(element) {
 
 function emptyCart() {
 	if (localStorage.getItem('shopping-cart')) {
-		// Clear JavaScript localStorage by index, the entire cart is erase
-		localStorage.removeItem('shopping-cart');
-		showCartTable();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+              )
+                // Clear JavaScript localStorage by index, the entire cart is erase
+                localStorage.removeItem('shopping-cart');
+                showCartTable();
+            }
+          })
+       
 	}
 }
 
@@ -230,6 +271,8 @@ function showCartTable() {
 	let price = 0;
 	let quantity = 0;
 	let subTotal = 0;
+    let sales= 0;
+    let shippingRate = 8;
 
 	if (localStorage.getItem('shopping-cart')) {
 		let shoppingCart = JSON.parse(localStorage.getItem('shopping-cart'));
@@ -239,6 +282,7 @@ function showCartTable() {
 			price = parseFloat(cartItem.price);
 			quantity = parseInt(cartItem.quantity)
 			subTotal = price * quantity
+            sales += (subTotal)*0.06
             itemCount += quantity
 			cartRowHTML += '<tr>' +
             '<td>' + '<button id="deleteItem" class="remove-button" ><i class="fa fa-trash" onclick="removeItem(this)" aria-hidden="true"></i></button> ' +
@@ -248,12 +292,14 @@ function showCartTable() {
 				"<td id='itemSubtotal' class='text-right'>$" + subTotal.toFixed(2) + "</td>" +
 				"</tr>";
 
-			grandTotal += subTotal;
+			grandTotal += (subTotal + sales + shippingRate);
 		});
 	}
 	document.getElementById('cartTableBody').innerHTML = cartRowHTML;
-    document.getElementById('itemCount').textContent = itemCount;
-    document.getElementById('totalAmount').textContent = "$" + grandTotal.toFixed(2);
+    document.getElementById('saleTax').textContent = "$" + sales.toFixed(2);
+    document.getElementById('shippingRate').textContent = "$" + shippingRate;
+    document.getElementById('itemCountTotal').textContent = itemCount;
+    document.getElementById('grandAmount').textContent = "$" + grandTotal.toFixed(2);
 }
 
 function removeItem(element) {
@@ -291,15 +337,43 @@ function removeItem(element) {
     if (vinylAdded == undefined){
         productsWish.push(vinyl)
         localStorage.setItem("wish",JSON.stringify(productsWish))
+        Swal.fire({
+            title:`Item added to your Wishlist`,
+            text:`You added ${vinyl.title} from ${vinyl.artist} to your wishlist`,
+            confirmButtonColor: `#D9A566`,
+            confirmButtonText: `Ok`
+            })
     } else{
-        alert(`Item is in your Wish List`)
+        Swal.fire({
+            title:`Item is already in your wishlist`,
+            icon: "info",
+            timer: 2000,
+            showConfirmButton:false 
+        })
     }
 }
+
+function removeFromWishList(itemId) {
+    // Remove item from the wishlist section
+    const item = document.getElementById(`productoCarrito${itemId}`);
+    if (item) {
+      item.parentNode.removeChild(item);
+    }
+    // Remove item from local storage
+    const wishlistItems = JSON.parse(localStorage.getItem('wish')) || [];
+    const updatedWishlistItems = wishlistItems.filter(item => item.id !== itemId);
+    localStorage.setItem('wish', JSON.stringify(updatedWishlistItems));
+  
+    // Remove item from productsWish array as well
+    productsWish = updatedWishlistItems;
+  }
 
 function cardToWish(array){
     wishSection.innerHTML = ``
     array.forEach((productsWish)=>{
-        wishSection.innerHTML += `
+        const item = document.createElement('div');
+        item.id = `productoCarrito${productsWish.id}`;
+        item.innerHTML += `
         <div > 
         <div class="card col d-flex" style="width: 15rem;float: none;margin: 0 auto; id ="productoCarrito${productsWish.id}">
                  <img class="card-img-top img-fluid" style="height: 100%; float: none;margin: 0 auto;width:100%" src="assets/${productsWish.image}" alt="">
@@ -308,11 +382,52 @@ function cardToWish(array){
                         <p class="card-text">${productsWish.artist}</p>
                          <p class="price-item">$<span>${productsWish.price}</span></p> 
                          <input type="text" class="product-quantity" name="quantity" value="1" size="2"/>
-                         <button class="btn btn-outline-success" id="botonMove${productsWish.id}" onClick="addToCart(this)">Move to Cart</button>
+                         <button class="btn btn-outline-success" id="botonMove${productsWish.id}" onClick="addToCart(this)">Move to Cart</button> 
+                         <button class="btn btn-outline-success " id="botonDeleteWish" onClick="removeFromWishList(${productsWish.id})" ><i class="fa-regular fa-delete-left"></i></button>
                  </div>    
             </div>
        </div>`
+       wishSection.appendChild(item);
     })
+}
+
+function checkOut(){
+    let shoppingCart = JSON.parse(localStorage.getItem('shopping-cart'));
+    if(shoppingCart === null){
+        Swal.fire({
+            title: "Your cart is empty, please browse our catalog.",
+            icon: "info"
+        })
+    } else{
+        Swal.fire({
+            title: 'Do you want to proceed with the purchase?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: 'green',
+            cancelButtonColor: 'red',
+        }).then((result) => {
+            if(result.isConfirmed){
+               Swal.fire({
+                  title: 'Purchase sucessful',
+                  icon: 'success',
+                  confirmButtonColor: 'green',
+                  text: `Thanks for your purchase. You will receive a receipt in your email `,
+                  })
+               localStorage.removeItem('shopping-cart');
+               showCartTable();
+            }else{
+               Swal.fire({
+                  title: 'Purchase Incomplete',
+                  icon: 'info',
+                  text: `The purchase has not been completed! The items are still in the shopping cart`,
+                  confirmButtonColor: 'green',
+                  timer:3500
+              })
+            }
+        } )
+    }
 }
 
 //Calling EVENTS, a couple of other events I added them direcly on the button using onclick, hope that is okay
@@ -355,14 +470,15 @@ btnCatalogCart.addEventListener("click", ()=>{
 })
 
 btnCheckout.addEventListener("click", ()=>{
-    let shoppingCart = JSON.parse(localStorage.getItem('shopping-cart'));
-    if(shoppingCart === null){
-        alert(`Your cart is Empty, please browse our catalog`)
-    } else{
-        alert('Thanks for your purchase')
-    }
+    checkOut()
 })
 
 addWish.addEventListener("click", ()=>{
     cardToWish(productsWish)
 })
+
+//Initial timeout stamp for loading catalog
+setTimeout (()=>{
+    loader.remove()
+    showCatalog(catalogVinyl)
+}, 1400)

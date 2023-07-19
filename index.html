@@ -7,8 +7,10 @@
     <title>Vinyl Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <!--Toastify-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <header>
@@ -47,6 +49,11 @@
                 <div class="background-image"></div>
                 <h2 class="heroTitle">Welcome to our Store</h2>
                 <p class="heroPara">Browse our catalog, shop and sell records with us</p>
+            </div>
+            <div id="loader" class="d-flex justify-content-center">
+            <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden"></span>
+            </div>
             </div>
           <div class="d-flex">
             <div id="catalogSection" style="display:none;">
@@ -114,9 +121,17 @@
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td class="text-right">Sales tax (6%):</td>
+                                <td id="saleTax" class="text-right" colspan="3"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right">Shipping Rate (flat):</td>
+                                <td id="shippingRate" class="text-right" colspan="3"></td>
+                            </tr>
+                            <tr>
                                 <td class="text-right">Total:</td>
-                                <td id="itemCount" class="text-right" colspan="2"></td>
-                                <td id="totalAmount" class="text-right"></td>
+                                <td id="itemCountTotal" class="text-right" colspan="2"></td>
+                                <td id="grandAmount" class="text-right"></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -140,6 +155,12 @@
         <button>Subscribe</button>
         <p>A company dedicated to providing the best vinyl records and music experiences.</p>
       </footer>
+      <!--Script Sweet alert-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <!--Toastify-->   
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!--Luxon--> 
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.3.0/build/global/luxon.min.js"></script>
     <!-- JS scripts added the jquery library to use jquery selector or simplify code by directly using $ and calling elements -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="class.js"></script>

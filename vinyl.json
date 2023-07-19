@@ -1,0 +1,133 @@
+[
+    {
+        "id": 1,
+        "artist": "Miley Cirus",
+        "title": "Decades",
+        "album": "Flowers",
+        "price": 39.99,
+        "image": "release3.png"
+    },
+    {
+        "id": 2,
+        "artist": "Beatles",
+        "title": "Postal Service",
+        "album": "Abbey Road",
+        "price": 21.99,
+        "image": "release2.png"
+    },
+    {
+        
+        "id": 3,
+        "artist": "Kuai Gabino",
+        "title": "Someday",
+        "album": "Human",
+        "price": 59.99,
+        "image": "release1.png"
+    },
+    {
+        "id": 4,
+        "artist": "Kygo",
+        "title": "Love Somebody",
+        "album": "Cloud Nine",
+        "price": 51.99,
+        "image": "release4.png"
+    },
+    {
+        "id": 5,
+        "artist": "Gorillaz",
+        "title": "Plsstic Beach",
+        "album": "The War",
+        "price": 59.99,
+        "image": "plastic.webp"
+    },
+    {
+        "id": 6,
+        "artist": "Eagles, Don Henley",
+        "title": "hotel California",
+        "album": "The War",
+        "price": 48.99,
+        "image": "hotel.webp"
+    },
+    {
+        "id": 7,
+        "artist": "Bob Marley",
+        "title": "The Best of Bob",
+        "album": "Alone",
+        "price": 23.99,
+        "image": "bobmarley.webp"
+    },
+    {
+        "id": 8,
+        "artist": "Pink Floyd",
+        "title": "Darkside Moon",
+        "album": "The War",
+        "price": 33.99,
+        "image": "pink.webp"
+    },
+    {
+        
+        "id": 9,
+        "artist": "Justin Paul",
+        "title": "La la land",
+        "album": "The War",
+        "price": 24.99,
+        "image": "lalaland.webp"
+    },
+    {
+        "id": 10,
+        "artist": "Chris Stapleton",
+        "title": "Traveler",
+        "album": "The War",
+        "price": 38.99,
+        "image": "traveller.webp"
+    },
+    {
+        "id": 11,
+        "artist": "Kaney West",
+        "title": "Dropout",
+        "album": "ABS",
+        "price": 49.99,
+        "image": "dropout.webp"
+    },
+    {
+        "id": 12,
+        "artist": "Lorde",
+        "title": "Melodrama",
+        "album": "One night",
+        "price": 79.99,
+        "image": "melodrama.webp"
+    },
+    {
+        
+        "id": 13,
+        "artist": "Led Zeppelin",
+        "title": "Led Zeppelin",
+        "album": "LP",
+        "price": 44.99,
+        "image": "led.webp"
+    },
+    {
+        "id": 14,
+        "artist": "John Lennon",
+        "title": "John Lennon",
+        "album": "Accross Bar",
+        "price": 58.99,
+        "image": "album8.webp"
+    },
+    {
+        "id": 15,
+        "artist": "Lana del Rey",
+        "title": "Lust for Life",
+        "album": "Life",
+        "price": 39.99,
+        "image": "lana.webp"
+    },
+    {
+        "id": 16,
+        "artist": "Frank Sinatra",
+        "title": "Sinatra Best",
+        "album": "2 FP",
+        "price": 14.99,
+        "image": "sinatra.webp"
+    }
+]

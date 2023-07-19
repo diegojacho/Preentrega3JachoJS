@@ -325,6 +325,9 @@ body {
   input.invalid {
     border-color: red;
   }
+.btn-delete{
+  color: black;
+}
 
 /* Footer styles */
 .footer {
